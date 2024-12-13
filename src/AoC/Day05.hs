@@ -1,7 +1,7 @@
-module AoC.Day05 (parseInput, toGraphs) where
+module AoC.Day05 (solution) where
 
 import qualified Data.Set as Set
-import Util.Graph (Graph)
+import Util.Graph (Graph, topoSort)
 import Util.Parsing (splitStringAt)
 
 type Page = String
@@ -52,3 +52,23 @@ getDestinations orderings update page =
 toGraphs :: Orderings -> Updates -> [Graph]
 toGraphs orderings =
   map (\update -> zip update (map (getDestinations orderings update) update))
+
+summation :: Updates -> [Graph] -> Int
+summation updates graphs =
+  let helper acc rest =
+        case rest of
+          [] -> acc
+          (_, Nothing) : tl -> helper acc tl
+          (update, Just graph) : tl ->
+            if update == graph
+              then helper acc tl
+              else
+                let acc' = acc + (read (graph !! (length graph `div` 2)) :: Int)
+                 in helper acc' tl
+   in helper 0 (zip updates (map topoSort graphs))
+
+solution :: [String] -> Int
+solution input =
+  let (orderings, updates) = parseInput input
+      graphs = toGraphs orderings updates
+   in summation updates graphs

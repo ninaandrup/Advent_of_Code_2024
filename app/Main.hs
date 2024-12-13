@@ -1,19 +1,10 @@
 module Main where
 
-import AoC.Day05 (parseInput, toGraphs)
-import qualified Util.Graph
+import AoC.Day05 (solution)
 
 main :: IO ()
 main = do
-  contents <- readFile "input/day05_example.txt"
+  contents <- readFile "input/day05_input.txt"
   let toLines = lines contents
 
-  let (orderings, updates) = parseInput toLines
-  print orderings
-  print (head updates)
-
-  let graphs = toGraphs orderings updates
-  print graphs
-
-  let sorted = map Util.Graph.topoSort graphs
-  print sorted
+  print (solution toLines)
