@@ -1,4 +1,4 @@
-module AoC.Day06 (debugger, solution) where
+module AoC.Day06 (solution) where
 
 import Control.Applicative ((<|>))
 import Util.Lib ((!?))
@@ -38,6 +38,10 @@ hasObstacle :: Grid -> Position -> Maybe Bool
 hasObstacle grid (x, y) =
   (grid !? y) >>= (!? x)
 
+isVisited :: Grid -> Position -> Bool
+isVisited grid (x, y) =
+  (grid !! y) !! x
+
 turn90Dec :: Direction -> Direction
 turn90Dec direction =
   case direction of
@@ -69,32 +73,29 @@ moveGuard grid pos =
               else Just (pos', direction)
           )
 
-allPositions :: [Maybe GuardPosition] -> Grid -> GuardPosition -> [Maybe GuardPosition]
-allPositions acc grid guardPos =
-  let newPos = moveGuard grid guardPos
-      acc' = acc ++ [newPos]
-   in case newPos of
-        Nothing -> acc'
-        Just guardPos' -> allPositions acc' grid guardPos'
+visit :: (Int, Int) -> Grid -> Grid
+visit (x, y) grid =
+  take y grid ++ [visitRow x (grid !! y)] ++ drop (y + 1) grid
+  where
+    visitRow i row = take i row ++ [True] ++ drop (i + 1) row
 
-debugger :: [String] -> [Maybe GuardPosition]
-debugger input =
-  let (grid, startPos) = parser input
-   in case startPos of
-        Nothing -> []
-        Just guardPos -> allPositions [startPos] grid guardPos
-
-countPositions :: Int -> Grid -> GuardPosition -> Int
-countPositions count grid guardPos =
+countPositions :: Int -> Grid -> Grid -> GuardPosition -> Int
+countPositions count visitedGrid grid guardPos =
   let newPos = moveGuard grid guardPos
-      count' = count + 1
    in case newPos of
-        Nothing -> count'
-        Just guardPos' -> countPositions count' grid guardPos'
+        Nothing -> count
+        Just guardPos' ->
+          if isVisited visitedGrid (fst guardPos')
+            then
+              countPositions count visitedGrid grid guardPos'
+            else
+              let visitedGrid' = visit (fst guardPos') visitedGrid
+               in countPositions (count + 1) visitedGrid' grid guardPos'
 
 solution :: [String] -> Int
 solution input =
   let (grid, startPos) = parser input
+      visitedGrid = map (map (const False)) grid
    in case startPos of
         Nothing -> 0
-        Just guardPos -> countPositions 0 grid guardPos
+        Just guardPos -> countPositions 1 (visit (fst guardPos) visitedGrid) grid guardPos

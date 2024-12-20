@@ -1,7 +1,7 @@
 module Main where
 
 import AoC.Day05 (solution)
-import AoC.Day06 (debugger, solution)
+import AoC.Day06 (solution)
 import System.Environment (getArgs)
 
 main :: IO ()
