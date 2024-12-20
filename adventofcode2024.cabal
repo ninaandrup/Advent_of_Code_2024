@@ -59,9 +59,11 @@ library
 
     -- Modules exported by the library.
     exposed-modules:  MyLib
+                      Util.Lib
                       Util.Graph
                       Util.Parsing
                       AoC.Day05
+                      AoC.Day06
 
     -- Modules included in this library but not exported.
     -- other-modules:
