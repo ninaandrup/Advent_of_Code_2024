@@ -64,6 +64,7 @@ library
                       Util.Parsing
                       AoC.Day05
                       AoC.Day06
+                      AoC.Day07
 
     -- Modules included in this library but not exported.
     -- other-modules:
