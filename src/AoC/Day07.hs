@@ -46,4 +46,6 @@ solution1 :: [String] -> Int
 solution1 = sumEquations operationCombinations . map parseEquation
 
 solution2 :: [String] -> Int
-solution2 input = 0
+solution2 input =
+  solution1 input
+    + sumEquations operationExtendedCombinations (filter (not . equationPossible operationCombinations) (map parseEquation input))
