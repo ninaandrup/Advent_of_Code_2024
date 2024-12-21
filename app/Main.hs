@@ -2,6 +2,7 @@ module Main where
 
 import AoC.Day05 (solution)
 import AoC.Day06 (solution)
+import AoC.Day07 (solution)
 import System.Environment (getArgs)
 
 main :: IO ()
@@ -17,6 +18,7 @@ main = do
           case day of
             "05" -> print (AoC.Day05.solution contentLines)
             "06" -> print (AoC.Day06.solution contentLines)
+            "07" -> print (AoC.Day07.solution contentLines)
             _ -> putStrLn "Day is not implemented"
       )
     _ -> putStrLn "Wrong number of arguments"
