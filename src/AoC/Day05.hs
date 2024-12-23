@@ -1,4 +1,4 @@
-module AoC.Day05 (solution) where
+module AoC.Day05 (solution1, solution2) where
 
 import qualified Data.Set as Set
 import Util.Graph (Graph, topoSort)
@@ -67,8 +67,11 @@ summation updates graphs =
                  in helper acc' tl
    in helper 0 (zip updates (map topoSort graphs))
 
-solution :: [String] -> Int
-solution input =
+solution1 :: [String] -> Int
+solution1 input = 0
+
+solution2 :: [String] -> Int
+solution2 input =
   let (orderings, updates) = parseInput input
       graphs = toGraphs orderings updates
    in summation updates graphs
