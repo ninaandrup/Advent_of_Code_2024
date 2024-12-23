@@ -4,25 +4,23 @@ data File = File {idx :: Int, fileSize :: Int} deriving (Show)
 
 newtype Space = Space {spaceSize :: Int} deriving (Show)
 
-(.+.) :: Space -> Space -> Space
-(.+.) s1 s2 =
-  Space {spaceSize = spaceSize s1 + spaceSize s2}
-
 data DiskData = DiskFile File | DiskSpace Space deriving (Show)
 
 type DiskMap = [DiskData]
 
--- TODO: Handle size = 0
 parseFile :: Int -> String -> DiskMap
 parseFile _ [] = []
 parseFile idx' (x : xs) =
-  DiskFile File {idx = idx', fileSize = read [x] :: Int} : parseSpace (idx' + 1) xs
+  case read [x] :: Int of
+    0 -> parseSpace idx' xs
+    n -> DiskFile File {idx = idx', fileSize = n} : parseSpace (idx' + 1) xs
 
--- TODO: Handle size = 0
 parseSpace :: Int -> String -> DiskMap
 parseSpace _ [] = []
 parseSpace idx' (x : xs) =
-  DiskSpace Space {spaceSize = read [x] :: Int} : parseFile idx' xs
+  case read [x] :: Int of
+    0 -> parseFile idx' xs
+    n -> DiskSpace Space {spaceSize = n} : parseFile idx' xs
 
 fileToBlocks :: File -> [Int]
 fileToBlocks file = replicate (fileSize file) (idx file)
@@ -31,36 +29,42 @@ fileToBlocksWithLimit :: Int -> File -> (File, [Int])
 fileToBlocksWithLimit limit file =
   (File {idx = idx file, fileSize = fileSize file - limit}, replicate limit (idx file))
 
-moveUp :: [Int] -> Space -> Int -> DiskMap -> (Space, DiskMap, [Int])
-moveUp _ endSpace _ [] = (endSpace, [], [])
-moveUp acc endSpace diskSpace (DiskFile file : xs)
+moveUp :: [Int] -> Int -> DiskMap -> (DiskMap, [Int])
+moveUp _ _ [] = ([], [])
+moveUp acc diskSpace (DiskFile file : xs)
   | fileSize file < diskSpace =
       moveUp
         (fileToBlocks file)
-        endSpace
         (diskSpace - fileSize file)
         xs
   | fileSize file == diskSpace =
-      (endSpace, xs, acc ++ fileToBlocks file)
+      (xs, acc ++ fileToBlocks file)
   | otherwise =
       let (file', acc') = fileToBlocksWithLimit diskSpace file
-       in (endSpace, DiskFile file' : xs, acc ++ acc')
-moveUp acc endSpace diskSpace (DiskSpace space : xs) =
-  moveUp acc (endSpace .+. space) diskSpace xs
+       in (DiskFile file' : xs, acc ++ acc')
+moveUp acc diskSpace (DiskSpace _ : xs) =
+  moveUp acc diskSpace xs
 
-compacting :: Space -> DiskMap -> [Int]
-compacting _ [] = []
-compacting endSpace (DiskFile file : xs) =
-  fileToBlocks file ++ compacting endSpace xs
-compacting endSpace (DiskSpace space : xs) =
-  let (endSpace', xs', res) = moveUp [] endSpace (spaceSize space) (reverse xs)
-   in res ++ compacting endSpace' (reverse xs')
+compacting :: DiskMap -> [Int]
+compacting [] = []
+compacting (DiskFile file : xs) =
+  fileToBlocks file ++ compacting xs
+compacting (DiskSpace space : xs) =
+  let (xs', res) = moveUp [] (spaceSize space) (reverse xs)
+   in res ++ compacting (reverse xs')
+
+singleInteger :: Int -> [Int]
+singleInteger x = map (read . (: [])) (show x)
+
+singleIntegers :: [Int] -> [Int]
+singleIntegers = foldr (\x acc -> singleInteger x ++ acc) []
 
 checkSum :: [Int] -> Int
-checkSum xs = sum (zipWith (*) xs [0 ..])
+checkSum xs = sum (zipWith (*) (singleIntegers xs) [0 ..])
 
 solution1 :: [String] -> Int
-solution1 input = checkSum (compacting (Space {spaceSize = 0}) (parseFile 0 (head input)))
+solution1 input = checkSum (compacting (parseFile 0 (head input)))
 
-solution2 :: [String] -> Int
-solution2 input = 0
+solution2 :: [String] -> [Int]
+solution2 input =
+  [] -- singleIntegers (compacting (parseFile 0 (head input)))
