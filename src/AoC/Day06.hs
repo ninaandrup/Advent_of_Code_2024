@@ -1,4 +1,4 @@
-module AoC.Day06 (solution) where
+module AoC.Day06 (solution1, solution2) where
 
 import Control.Applicative ((<|>))
 import Util.Lib ((!?))
@@ -92,10 +92,13 @@ countPositions count visitedGrid grid guardPos =
               let visitedGrid' = visit (fst guardPos') visitedGrid
                in countPositions (count + 1) visitedGrid' grid guardPos'
 
-solution :: [String] -> Int
-solution input =
+solution1 :: [String] -> Int
+solution1 input =
   let (grid, startPos) = parser input
       visitedGrid = map (map (const False)) grid
    in case startPos of
         Nothing -> 0
         Just guardPos -> countPositions 1 (visit (fst guardPos) visitedGrid) grid guardPos
+
+solution2 :: [String] -> Int
+solution2 input = 0
