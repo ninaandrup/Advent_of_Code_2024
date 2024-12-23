@@ -1,4 +1,4 @@
-module AoC.Day10 where
+module AoC.Day10 (solution1, solution2) where
 
 import Util.Graph (Edge, Graph, Vertex, addEdge, bfs, getNeighbours)
 

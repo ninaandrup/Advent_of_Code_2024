@@ -66,6 +66,7 @@ library
                       AoC.Day06
                       AoC.Day07
                       AoC.Day10
+                      AoC.Day11
 
     -- Modules included in this library but not exported.
     -- other-modules:
