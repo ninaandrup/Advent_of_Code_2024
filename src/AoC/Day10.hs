@@ -1,6 +1,6 @@
 module AoC.Day10 where
 
-import Util.Graph (Edge, Graph, Vertex, addEdge, bfs)
+import Util.Graph (Edge, Graph, Vertex, addEdge, bfs, getNeighbours)
 
 data Position = Position {idx :: Int, height :: Int} deriving (Show, Eq, Ord)
 
@@ -52,5 +52,16 @@ reachableTops graph =
 solution1 :: [String] -> Int
 solution1 input = sum (map length (reachableTops (toGraph (parseInput input))))
 
+modifiedbfs :: Vertex Position -> Graph Position -> Int
+modifiedbfs Position {idx = _, height = 9} _ = 1
+modifiedbfs vertex graph =
+  let neighbours = getNeighbours vertex graph
+   in sum (map (`modifiedbfs` graph) neighbours)
+
+reachableTopsAllPaths :: Graph Position -> Int
+reachableTopsAllPaths graph =
+  let startPositions = filter (\v -> height v == 0) (map fst graph)
+   in sum (map (`modifiedbfs` graph) startPositions)
+
 solution2 :: [String] -> Int
-solution2 input = 0
+solution2 input = reachableTopsAllPaths (toGraph (parseInput input))
