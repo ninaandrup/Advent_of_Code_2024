@@ -49,11 +49,11 @@ getDestinations orderings update page =
               else helper acc tl
    in helper [] orderings
 
-toGraphs :: Orderings -> Updates -> [Graph]
+toGraphs :: Orderings -> Updates -> [Graph String]
 toGraphs orderings =
   map (\update -> zip update (map (getDestinations orderings update) update))
 
-summation :: Updates -> [Graph] -> Int
+summation :: Updates -> [Graph String] -> Int
 summation updates graphs =
   let helper acc rest =
         case rest of
