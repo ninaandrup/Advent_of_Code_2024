@@ -1,4 +1,4 @@
-module AoC.Day10 where
+module AoC.Day10 (solution1, solution2) where
 
 import Util.Graph (Edge, Graph, Vertex, addEdge, bfs, getNeighbours)
 
@@ -55,8 +55,8 @@ solution1 input = sum (map length (reachableTops (toGraph (parseInput input))))
 modifiedbfs :: Vertex Position -> Graph Position -> Int
 modifiedbfs Position {idx = _, height = 9} _ = 1
 modifiedbfs vertex graph =
-  let neighbours = getNeighbours vertex graph
-   in sum (map (`modifiedbfs` graph) neighbours)
+  let nbs = getNeighbours vertex graph
+   in sum (map (`modifiedbfs` graph) nbs)
 
 reachableTopsAllPaths :: Graph Position -> Int
 reachableTopsAllPaths graph =
