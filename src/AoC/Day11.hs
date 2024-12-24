@@ -29,4 +29,4 @@ splitInTwo x =
    in (read (take len x'), read (drop len x'))
 
 solution2 :: [String] -> Int
-solution2 input = 0
+solution2 = length . blinks 75 . parser
