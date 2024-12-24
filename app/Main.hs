@@ -5,6 +5,7 @@ import AoC.Day06 (solution1, solution2)
 import AoC.Day07 (solution1, solution2)
 import AoC.Day10 (solution1, solution2)
 import AoC.Day11 (solution1, solution2)
+import AoC.Day13 (solution1, solution2)
 import System.Environment (getArgs)
 
 main :: IO ()
@@ -25,6 +26,7 @@ main = do
             "07" -> toPrint AoC.Day07.solution1 AoC.Day07.solution2
             "10" -> toPrint AoC.Day10.solution1 AoC.Day10.solution2
             "11" -> toPrint AoC.Day11.solution1 AoC.Day11.solution2
+            "13" -> toPrint AoC.Day13.solution1 AoC.Day13.solution2
             _ -> putStrLn "Day is not implemented"
       )
     _ -> putStrLn "Wrong number of arguments"
